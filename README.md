@@ -14,7 +14,7 @@ A desktop application for real-time speech-to-text captions with support for bot
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/caption-overlay.git
+   git clone https://github.com/omshree134/caption_project
    cd caption-overlay
    ```
 
