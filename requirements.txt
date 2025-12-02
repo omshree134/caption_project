@@ -18,3 +18,10 @@ faster-whisper>=1.0.0
 
 # Voice Activity Detection (Optional - improves offline mode efficiency)
 webrtcvad-wheels>=2.0.10
+
+# Translation with IndicTrans2 (Optional - for offline translation)
+torch>=2.0.0
+transformers>=4.33.0
+sentencepiece>=0.1.99
+# IndicTransToolkit - install separately:
+# pip install git+https://github.com/VarunGumma/IndicTransToolkit.git

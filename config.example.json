@@ -2,5 +2,8 @@
     "api_key": "YOUR_REVERIE_API_KEY_HERE",
     "app_id": "YOUR_APP_ID_HERE",
     "default_language": "hi",
-    "default_domain": "generic"
+    "default_domain": "generic",
+    "translation_enabled": false,
+    "translation_target_lang": "en",
+    "show_original_text": false
 }
