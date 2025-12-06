@@ -243,10 +243,11 @@ class WhisperOfflineWorker(QThread):
         self.min_speech_duration = 0.2
         self.max_batch_duration = 5.0
         
-        # Silence detection - TWO LEVELS
-        self.short_silence_frames = 6   # ~192ms
-        self.long_silence_frames = 20   # ~640ms
-        self.trailing_silence_frames = 3
+        # Silence detection - ULTRA AGGRESSIVE for real-time translation
+        # Each frame = ~32ms
+        self.short_silence_frames = 2   # ~64ms - triggers partial transcription
+        self.long_silence_frames = 5    # ~160ms - triggers final/sentence end
+        self.trailing_silence_frames = 1  # ~32ms - minimum trailing
         
         # State
         self.audio_buffer = []
@@ -632,7 +633,7 @@ class LanguageDetector(QThread):
                             task="transcribe",
                             vad_filter=True,
                             vad_parameters=dict(
-                                min_silence_duration_ms=300,
+                                min_silence_duration_ms=100,
                                 speech_pad_ms=200,
                             ),
                             condition_on_previous_text=False,
@@ -648,8 +649,18 @@ class LanguageDetector(QThread):
                         detected_lang = info.language
                         confidence = info.language_probability
                         
+                        # Check if there's actual speech - ignore if no meaningful text
+                        sample_preview = sample_text[:40].strip() if sample_text else ""
+                        has_speech = len(sample_preview) > 3 and not sample_preview.isspace()
+                        
                         # Log with sample text for debugging
-                        sample_preview = sample_text[:40].strip() if sample_text else "(no speech)"
+                        if not has_speech:
+                            print(f"[LangDetect] No speech detected - skipping")
+                            # Reset for next detection without processing
+                            self.last_detection_time = current_time
+                            self.audio_buffer = []
+                            continue
+                        
                         print(f"[LangDetect] Result: {detected_lang} ({confidence:.1%}) - \"{sample_preview}...\"")
                         
                         # Process the detection with stability checks

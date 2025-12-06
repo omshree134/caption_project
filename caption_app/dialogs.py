@@ -5,10 +5,12 @@ UI Dialogs for the Caption App
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QSpinBox, QFontComboBox, QComboBox, QColorDialog, QGroupBox,
-    QFormLayout, QSlider
+    QFormLayout, QSlider, QCheckBox
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QFont
+
+from .constants import TRANSLATION_LANGUAGES
 
 
 class CaptionSettingsDialog(QDialog):
@@ -93,6 +95,32 @@ class CaptionSettingsDialog(QDialog):
         
         layout.addWidget(mode_group)
         
+        # Dual Captioning Group
+        dual_group = QGroupBox("Dual Language Translation")
+        dual_layout = QFormLayout(dual_group)
+        
+        # Dual captioning checkbox
+        self.dual_caption_checkbox = QCheckBox("Enable dual language translation")
+        self.dual_caption_checkbox.setChecked(self.settings.get('dual_captioning_enabled', False))
+        self.dual_caption_checkbox.setToolTip("Show translations in two languages simultaneously")
+        self.dual_caption_checkbox.toggled.connect(self._on_dual_toggled)
+        dual_layout.addRow(self.dual_caption_checkbox)
+        
+        # Second language selector
+        self.dual_lang_combo = QComboBox()
+        self.dual_lang_combo.setMaxVisibleItems(5)  # Scrollable dropdown
+        for code, name in TRANSLATION_LANGUAGES.items():
+            self.dual_lang_combo.addItem(name, code)
+        # Set current second language
+        current_lang_2 = self.settings.get('translation_target_lang_2', 'hi')
+        lang_idx = self.dual_lang_combo.findData(current_lang_2)
+        if lang_idx >= 0:
+            self.dual_lang_combo.setCurrentIndex(lang_idx)
+        self.dual_lang_combo.setEnabled(self.dual_caption_checkbox.isChecked())
+        dual_layout.addRow("Second Language:", self.dual_lang_combo)
+        
+        layout.addWidget(dual_group)
+        
         # Font Settings Group
         font_group = QGroupBox("Font Settings")
         font_layout = QFormLayout(font_group)
@@ -102,12 +130,13 @@ class CaptionSettingsDialog(QDialog):
         self.font_combo.setCurrentFont(QFont(self.settings.get('font_family', 'Segoe UI')))
         font_layout.addRow("Font:", self.font_combo)
         
-        # Font size
+        # Font size (base size - will be scaled by zoom level)
         self.font_size_spin = QSpinBox()
         self.font_size_spin.setRange(10, 72)
         self.font_size_spin.setValue(self.settings.get('font_size', 18))
         self.font_size_spin.setSuffix(" px")
-        font_layout.addRow("Size:", self.font_size_spin)
+        self.font_size_spin.setToolTip("Base font size (scales with zoom +/- buttons)")
+        font_layout.addRow("Base Size:", self.font_size_spin)
         
         # Font weight
         self.font_weight_combo = QComboBox()
@@ -287,6 +316,8 @@ class CaptionSettingsDialog(QDialog):
     def reset_defaults(self):
         """Reset all settings to defaults"""
         self.caption_mode_combo.setCurrentIndex(0)  # Multi line
+        self.dual_caption_checkbox.setChecked(False)
+        self.dual_lang_combo.setCurrentIndex(self.dual_lang_combo.findData('hi'))
         self.font_combo.setCurrentFont(QFont('Segoe UI'))
         self.font_size_spin.setValue(18)
         self.font_weight_combo.setCurrentText('Normal')
@@ -301,10 +332,16 @@ class CaptionSettingsDialog(QDialog):
         self.border_width_spin.setValue(1)
         self.update_preview()
     
+    def _on_dual_toggled(self, checked):
+        """Enable/disable second language combo based on dual checkbox"""
+        self.dual_lang_combo.setEnabled(checked)
+    
     def get_settings(self):
         """Return current settings as dictionary"""
         return {
             'caption_mode': self.caption_mode_combo.currentData(),
+            'dual_captioning_enabled': self.dual_caption_checkbox.isChecked(),
+            'translation_target_lang_2': self.dual_lang_combo.currentData(),
             'font_family': self.font_combo.currentFont().family(),
             'font_size': self.font_size_spin.value(),
             'font_weight': self.font_weight_combo.currentText(),

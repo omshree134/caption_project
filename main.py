@@ -8,8 +8,6 @@ Usage:
 """
 
 import sys
-
-
 def exception_hook(exctype, value, tb):
     """Global exception hook to catch unhandled exceptions"""
     import traceback

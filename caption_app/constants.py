@@ -63,46 +63,151 @@ def get_vad():
     return None
 
 
-# Supported languages for ASR (source languages)
+# Supported languages for ASR (source languages) - shown in native script
 LANGUAGES = {
-    "hi": "Hindi",
+    "hi": "हिन्दी",
     "en": "English", 
-    "bn": "Bengali",
-    "ta": "Tamil",
-    "te": "Telugu",
-    "mr": "Marathi",
-    "gu": "Gujarati",
-    "kn": "Kannada",
-    "ml": "Malayalam",
-    "pa": "Punjabi",
-    "or": "Odia",
-    "as": "Assamese",
-    "ur": "Urdu",
+    "bn": "বাংলা",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "mr": "मराठी",
+    "gu": "ગુજરાતી",
+    "kn": "ಕನ್ನಡ",
+    "ml": "മലയാളം",
+    "pa": "ਪੰਜਾਬੀ",
+    "or": "ଓଡ଼ିଆ",
+    "as": "অসমীয়া",
+    "ur": "اردو",
 }
 
 # All languages supported for translation (IndicTrans2 supports all 22 scheduled Indian languages)
+# Shown in native script
 TRANSLATION_LANGUAGES = {
     "en": "English",
-    "hi": "Hindi",
-    "bn": "Bengali",
-    "ta": "Tamil",
-    "te": "Telugu",
-    "mr": "Marathi",
-    "gu": "Gujarati",
-    "kn": "Kannada",
-    "ml": "Malayalam",
-    "pa": "Punjabi",
-    "or": "Odia",
-    "as": "Assamese",
-    "ur": "Urdu",
-    "ne": "Nepali",
-    "sa": "Sanskrit",
-    "kok": "Konkani",
-    "mai": "Maithili",
-    "doi": "Dogri",
-    "sat": "Santali",
-    "ks": "Kashmiri",
-    "mni": "Manipuri",
-    "sd": "Sindhi",
-    "brx": "Bodo",
+    "hi": "हिन्दी",
+    "bn": "বাংলা",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "mr": "मराठी",
+    "gu": "ગુજરાતી",
+    "kn": "ಕನ್ನಡ",
+    "ml": "മലയാളം",
+    "pa": "ਪੰਜਾਬੀ",
+    "or": "ଓଡ଼ିଆ",
+    "as": "অসমীয়া",
+    "ur": "اردو",
+    "ne": "नेपाली",
+    "sa": "संस्कृतम्",
+    "kok": "कोंकणी",
+    "mai": "मैथिली",
+    "doi": "डोगरी",
+    "sat": "Santali (संताली)",
+    "ks": "کٲشُر",
+    "mni": "মৈতৈলোন্",
+    "sd": "سنڌي",
+    "brx": "बर'",
 }
+
+# Reverie API supported languages (subset of full translation languages)
+# Shown in native script
+REVERIE_LANGUAGES = {
+    "en": "English",
+    "hi": "हिन्दी",
+    "bn": "বাংলা",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "mr": "मराठी",
+    "gu": "ગુજરાતી",
+    "kn": "ಕನ್ನಡ",
+    "ml": "മലയാളം",
+    "pa": "ਪੰਜਾਬੀ",
+    "or": "ଓଡ଼ିଆ",
+    "as": "অসমীয়া",
+    "ur": "اردو",
+    "ne": "नेपाली",
+    "kok": "कोंकणी",
+    "mai": "मैथिली",
+}
+
+# ============================================================================
+# SENTENCE TERMINATORS FOR ALL SUPPORTED LANGUAGES
+# Used to detect sentence boundaries in translation
+# ============================================================================
+
+# Full stop / Period equivalents by language
+SENTENCE_TERMINATORS = {
+    # Full stops (end of sentence)
+    "en": ['.', '!', '?'],                    # English
+    "hi": ['।', '॥', '.', '!', '?'],          # Hindi - Devanagari Danda & Double Danda
+    "bn": ['।', '॥', '.', '!', '?'],          # Bengali - uses Danda
+    "ta": ['।', '.', '!', '?'],               # Tamil
+    "te": ['।', '.', '!', '?'],               # Telugu
+    "mr": ['।', '॥', '.', '!', '?'],          # Marathi - Devanagari
+    "gu": ['।', '॥', '.', '!', '?'],          # Gujarati - uses Danda
+    "kn": ['।', '.', '!', '?'],               # Kannada
+    "ml": ['।', '.', '!', '?'],               # Malayalam
+    "pa": ['।', '॥', '.', '!', '?'],          # Punjabi (Gurmukhi)
+    "or": ['।', '॥', '.', '!', '?'],          # Odia - uses Danda
+    "as": ['।', '॥', '.', '!', '?'],          # Assamese - uses Bengali script
+    "ur": ['۔', '؟', '!', '.'],               # Urdu - Arabic full stop
+    "ne": ['।', '॥', '.', '!', '?'],          # Nepali - Devanagari
+    "kok": ['।', '॥', '.', '!', '?'],         # Konkani - Devanagari
+    "mai": ['।', '॥', '.', '!', '?'],         # Maithili - Devanagari
+    "sa": ['।', '॥', '.', '!', '?'],          # Sanskrit - Devanagari
+    "doi": ['।', '॥', '.', '!', '?'],         # Dogri
+    "sat": ['।', '.', '!', '?'],              # Santali
+    "ks": ['۔', '؟', '!', '.'],               # Kashmiri
+    "mni": ['।', '.', '!', '?'],              # Manipuri
+    "sd": ['۔', '؟', '!', '.'],               # Sindhi - Arabic script
+    "brx": ['।', '.', '!', '?'],              # Bodo - Devanagari
+}
+
+# Clause terminators (partial sentence, comma-like pauses)
+CLAUSE_TERMINATORS = {
+    "en": [',', ';', ':', '-'],
+    "hi": [',', '॰', ';', ':'],               # Hindi comma, abbreviation mark
+    "bn": [',', ';', ':'],
+    "ta": [',', ';', ':'],
+    "te": [',', ';', ':'],
+    "mr": [',', ';', ':'],
+    "gu": [',', ';', ':'],
+    "kn": [',', ';', ':'],
+    "ml": [',', ';', ':'],
+    "pa": [',', ';', ':'],
+    "or": [',', ';', ':'],
+    "as": [',', ';', ':'],
+    "ur": ['،', '؛', ':'],                    # Urdu comma, semicolon
+    "ne": [',', ';', ':'],
+    "kok": [',', ';', ':'],
+    "mai": [',', ';', ':'],
+    "sa": [',', ';', ':'],
+    "doi": [',', ';', ':'],
+    "sat": [',', ';', ':'],
+    "ks": ['،', '؛', ':'],
+    "mni": [',', ';', ':'],
+    "sd": ['،', '؛', ':'],
+    "brx": [',', ';', ':'],
+}
+
+def is_sentence_complete(text, lang="en"):
+    """Check if text ends with a sentence terminator for the given language"""
+    if not text:
+        return False
+    text = text.strip()
+    if not text:
+        return False
+    
+    terminators = SENTENCE_TERMINATORS.get(lang, SENTENCE_TERMINATORS["en"])
+    return text[-1] in terminators
+
+def is_clause_complete(text, lang="en"):
+    """Check if text ends with a clause terminator (comma, semicolon, etc.)"""
+    if not text:
+        return False
+    text = text.strip()
+    if not text:
+        return False
+    
+    clause_terms = CLAUSE_TERMINATORS.get(lang, CLAUSE_TERMINATORS["en"])
+    sentence_terms = SENTENCE_TERMINATORS.get(lang, SENTENCE_TERMINATORS["en"])
+    return text[-1] in clause_terms or text[-1] in sentence_terms

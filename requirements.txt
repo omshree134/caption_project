@@ -1,10 +1,10 @@
 # Desktop Caption Overlay App Dependencies
-
 # UI Framework
 PyQt5>=5.15.0
 
 # Audio Capture
 sounddevice>=0.4.0
+
 numpy>=1.20.0
 
 # WASAPI Loopback for System Audio Capture (Windows)
@@ -12,6 +12,7 @@ pyaudiowpatch>=0.2.12
 
 # Online STT (Reverie API)
 websockets>=10.0
+requests>=2.28.0
 
 # Offline Whisper Speech-to-Text (Optional but recommended)
 faster-whisper>=1.0.0
@@ -21,7 +22,9 @@ webrtcvad-wheels>=2.0.10
 
 # Translation with IndicTrans2 (Optional - for offline translation)
 torch>=2.0.0
+
 transformers>=4.33.0
+
 sentencepiece>=0.1.99
 # IndicTransToolkit - install separately:
 # pip install git+https://github.com/VarunGumma/IndicTransToolkit.git
